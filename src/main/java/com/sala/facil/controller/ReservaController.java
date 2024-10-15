@@ -1,8 +1,15 @@
 package com.sala.facil.controller;
 
+import com.sala.facil.DTOS.ReservaDTO;
+import com.sala.facil.Exceptions.SalaEstaDesativada;
+import com.sala.facil.Exceptions.UsuarioJaPossuiReservaException;
 import com.sala.facil.entity.Reserva;
+import com.sala.facil.entity.Usuario;
 import com.sala.facil.service.ReservaService;
+import jakarta.validation.Valid;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,26 +25,44 @@ public class ReservaController {
     private ReservaService service;
 
     @GetMapping("/all")
-    public List<Reserva> getAllReservas(){
-        return service.findAll();
+    public ResponseEntity<List<Reserva>> getAllReservas(){
+        return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
     }
 
-    @PostMapping
-    public Reserva createReserva(@RequestBody Reserva reserva){
-        return service.createReserva(reserva);
+    @PostMapping("/create")
+    public ResponseEntity<Object> createReserva(@RequestBody @Valid ReservaDTO reservaDTO) throws UsuarioJaPossuiReservaException, SalaEstaDesativada {
+    try {
+        Reserva reserva = new Reserva();
+        BeanUtils.copyProperties(reservaDTO, reserva);
+
+        Reserva reserva1 = service.createReserva(reserva);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(reserva1);
+    }catch (UsuarioJaPossuiReservaException u){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(u.getMessage());
+    }catch (SalaEstaDesativada s){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(s.getMessage());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Reserva> findById(@PathVariable long id){
+    }
+
+    @GetMapping("/find/{id}")
+    public ResponseEntity<Object> findById(@PathVariable long id){
         Optional<Reserva> reserva = service.findByID(id);
 
-        return reserva.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if(reserva.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reserva não Encontrada");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(reserva);
     }
 
-    @DeleteMapping("/{id}")
-    private ResponseEntity<Reserva> deleteByID(@PathVariable long id){
+    @DeleteMapping("/delete/{id}")
+    private ResponseEntity<Object> deleteByID(@PathVariable long id){
         Optional<Reserva> reserva = service.deleteByID(id);
 
-        return reserva.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if(reserva.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reserva não Encontrada");
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 }

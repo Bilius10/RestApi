@@ -1,8 +1,12 @@
 package com.sala.facil.controller;
 
+import com.sala.facil.DTOS.SalaDTO;
 import com.sala.facil.entity.Sala;
 import com.sala.facil.service.SalaService;
+import jakarta.validation.Valid;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,27 +21,37 @@ public class SalaController {
     private SalaService service;
 
     @GetMapping("/all")
-    public List<Sala> getAllSala(){
-        return service.findAll();
+    public ResponseEntity<List<Sala>> getAllSala(){
+        return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
     }
 
-    @PostMapping
-    public Sala saveSala(@RequestBody Sala sala){
-        return service.saveSala(sala);
+    @PostMapping("/create")
+    public ResponseEntity<Sala> saveSala(@RequestBody @Valid SalaDTO salaDTO){
+
+        Sala sala = new Sala();
+        BeanUtils.copyProperties(salaDTO, sala);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.saveSala(sala));
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Sala> findByID(@PathVariable long id){
+    @GetMapping("/find/{id}")
+    public ResponseEntity<Object> findByID(@PathVariable long id){
         Optional<Sala> sala = service.findByID(id);
 
-        return sala.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if(sala.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sala não Encontrado");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(sala);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Sala> deleteByID(@PathVariable long id){
+    @DeleteMapping("/delete/{id}")
+    public ResponseEntity<Object> deleteByID(@PathVariable long id){
         Optional<Sala> sala = service.deleteByID(id);
 
-        return sala.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
+        if(sala.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sala não Encontrado");
+        }
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
 }
