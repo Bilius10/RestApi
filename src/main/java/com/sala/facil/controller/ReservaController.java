@@ -1,10 +1,8 @@
 package com.sala.facil.controller;
 
 import com.sala.facil.DTOS.ReservaDTO;
-import com.sala.facil.Exceptions.SalaEstaDesativada;
-import com.sala.facil.Exceptions.UsuarioJaPossuiReservaException;
+import com.sala.facil.Exceptions.*;
 import com.sala.facil.entity.Reserva;
-import com.sala.facil.entity.Usuario;
 import com.sala.facil.service.ReservaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
@@ -30,7 +28,7 @@ public class ReservaController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<Object> createReserva(@RequestBody @Valid ReservaDTO reservaDTO) throws UsuarioJaPossuiReservaException, SalaEstaDesativada {
+    public ResponseEntity<Object> createReserva(@RequestBody @Valid ReservaDTO reservaDTO)  {
     try {
         Reserva reserva = new Reserva();
         BeanUtils.copyProperties(reservaDTO, reserva);
@@ -42,6 +40,12 @@ public class ReservaController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(u.getMessage());
     }catch (SalaEstaDesativada s){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(s.getMessage());
+    } catch (JaExisteReservaNesseDia j) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(j.getMessage());
+    } catch (DataAtingiuPrazo d) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(d.getMessage());
+    } catch (DataDaReservaJaPassou d) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(d.getMessage());
     }
 
     }
@@ -64,5 +68,17 @@ public class ReservaController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reserva não Encontrada");
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PutMapping("/update")
+    private ResponseEntity<Object> atualizarReserva(@RequestBody @Valid ReservaDTO reservaDTO){
+        Reserva reserva = new Reserva();
+        BeanUtils.copyProperties(reservaDTO, reserva);
+
+        Optional<Reserva> reserva2 = service.atualizarReserva(reserva);
+        if(reserva2.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reserva não Encontrada");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(reserva2);
     }
 }

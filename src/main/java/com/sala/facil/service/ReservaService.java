@@ -1,14 +1,14 @@
 package com.sala.facil.service;
 
-import com.sala.facil.Exceptions.SalaEstaDesativada;
-import com.sala.facil.Exceptions.UsuarioJaPossuiReservaException;
+import com.sala.facil.Exceptions.*;
 import com.sala.facil.entity.Reserva;
-import com.sala.facil.entity.Sala;
 import com.sala.facil.repository.ReservaRepository;
 import com.sala.facil.repository.SalaRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,20 +17,41 @@ public class ReservaService{
 
     @Autowired
     public ReservaRepository repository;
+    @Autowired
     public SalaRepository repositorySala;
 
     public List<Reserva> findAll(){
         return repository.findAll();
     }
 
-    public Reserva createReserva (Reserva reserva) throws UsuarioJaPossuiReservaException, SalaEstaDesativada {
+    public Reserva createReserva (Reserva reserva) throws UsuarioJaPossuiReservaException, SalaEstaDesativada, DataDaReservaJaPassou, DataAtingiuPrazo, JaExisteReservaNesseDia {
 
-        List<Reserva> usuarioReservas = repository.findByUsuario_idAndStatus(reserva.getUsuario_id(), 1);
-        if(!usuarioReservas.isEmpty()){
-            throw new UsuarioJaPossuiReservaException("Usuario possui "+usuarioReservas.size()+" reservas");
+        //verifica se a data da reserva ja passou
+        LocalDateTime dataAtual = LocalDateTime.now();
+        if(reserva.getData_pedido().isBefore(dataAtual)){
+            throw new DataDaReservaJaPassou("A data que foi marcado a reserva já passou");
         }
 
-        Optional<Sala> salaAtivada = repositorySala.findById_salaAndStatus(reserva.getSala_id(), 1);
+        //Verifica o prazo  máximo de 30 dias.
+        long diferencaDias = ChronoUnit.DAYS.between(dataAtual, reserva.getData_pedido());
+        if(diferencaDias > 30){
+            throw new DataAtingiuPrazo("Sua reserva excedeu o prazo maximo de 30 dias");
+        }
+
+        //Verificar se outro usuario ja reservou a sala nesse dia
+        List<Integer> reservasNoMesmoDia = repository.findByData_pedido(reserva.getData_pedido(), reserva.getSala_id());
+        if(!reservasNoMesmoDia.isEmpty()){
+            throw new JaExisteReservaNesseDia("Já existe uma reserva para esse dia.");
+        }
+
+        //Verifica se o usuario ja possui reserva nesse dia
+        List<Integer> usuarioReservas = repository.findByusuario_idAndstatus(reserva.getUsuario_id(), reserva.getData_pedido());
+        if(!usuarioReservas.isEmpty()){
+            throw new UsuarioJaPossuiReservaException("Usuario já possui "+usuarioReservas.size()+" reserva(s)");
+        }
+
+        //Verificar se a sala esta ativa
+        Optional<Integer> salaAtivada = repositorySala.findById_salaAndStatus(reserva.getSala_id());
         if(salaAtivada.isEmpty()){
             throw new SalaEstaDesativada("Sala esta desativada");
         }
@@ -50,5 +71,16 @@ public class ReservaService{
         }
 
         return reserva;
+    }
+
+    public Optional<Reserva> atualizarReserva(Reserva reserva){
+
+        Optional<Reserva> byId = repository.findById(reserva.getId_reserva());
+
+        if(byId.isEmpty()){
+            return byId;
+        }
+
+        return repository.updateById_reserva(reserva.getData_pedido(), reserva.getData_reserva(), reserva.getSala_id(), reserva.getUsuario_id(), reserva.getId_reserva());
     }
 }
