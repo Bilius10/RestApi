@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface SalaRepository extends JpaRepository<Sala, Long> {
 
     @Query("SELECT s.status FROM Sala s WHERE s.id_sala = :id_sala AND s.status = 1")
-    Optional<Integer> findById_salaAndStatus(int id_sala);
+    Optional<Integer> findById_salaAndStatus(Long id_sala);
 }

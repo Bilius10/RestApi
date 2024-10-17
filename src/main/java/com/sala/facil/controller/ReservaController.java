@@ -40,12 +40,16 @@ public class ReservaController {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(u.getMessage());
     }catch (SalaEstaDesativada s){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(s.getMessage());
-    } catch (JaExisteReservaNesseDia j) {
+    }catch (JaExisteReservaNesseDia j) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(j.getMessage());
-    } catch (DataAtingiuPrazo d) {
+    }catch (DataAtingiuPrazo d) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(d.getMessage());
-    } catch (DataDaReservaJaPassou d) {
+    }catch (DataDaReservaJaPassou d) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(d.getMessage());
+    }catch (SalaNaoExiste s){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(s.getMessage());
+    }catch (UsuarioNaoExiste u){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(u.getMessage());
     }
 
     }
@@ -75,10 +79,10 @@ public class ReservaController {
         Reserva reserva = new Reserva();
         BeanUtils.copyProperties(reservaDTO, reserva);
 
-        Optional<Reserva> reserva2 = service.atualizarReserva(reserva);
-        if(reserva2.isEmpty()){
+        int rowsAffected = service.atualizarReserva(reserva);
+        if(rowsAffected == 0){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reserva não Encontrada");
         }
-        return ResponseEntity.status(HttpStatus.OK).body(reserva2);
+        return ResponseEntity.status(HttpStatus.OK).body("Reserva atualizada");
     }
 }

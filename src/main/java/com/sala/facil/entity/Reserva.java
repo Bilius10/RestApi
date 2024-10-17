@@ -5,20 +5,26 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.io.Serial;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 @Entity
-public class Reserva {
+public class Reserva implements Serializable {
+
+    @Serial
+    private static final long serialVersionUID = 87654345L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_reserva;
     private LocalDateTime data_reserva;
     private LocalDateTime data_pedido;
     private int status;
-    private int sala_id;
-    private int usuario_id;
+    private Long sala_id;
+    private Long usuario_id;
 
-    public Reserva(Long id_reserva, LocalDateTime data_reserva, LocalDateTime data_pedido, int status, int sala_id, int usuario_id) {
+    public Reserva(Long id_reserva, LocalDateTime data_reserva, LocalDateTime data_pedido, int status, Long sala_id, Long usuario_id) {
         this.id_reserva = id_reserva;
         this.data_reserva = data_reserva;
         this.data_pedido = data_pedido;
@@ -54,19 +60,19 @@ public class Reserva {
         this.status = status;
     }
 
-    public int getSala_id() {
+    public long getSala_id() {
         return sala_id;
     }
 
-    public void setSala_id(int sala_id) {
+    public void setSala_id(Long sala_id) {
         this.sala_id = sala_id;
     }
 
-    public int getUsuario_id() {
+    public Long getUsuario_id() {
         return usuario_id;
     }
 
-    public void setUsuario_id(int usuario_id) {
+    public void setUsuario_id(Long usuario_id) {
         this.usuario_id = usuario_id;
     }
 

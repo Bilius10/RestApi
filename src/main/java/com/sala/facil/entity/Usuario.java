@@ -5,10 +5,15 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
-@Entity(name = "usuario")
-public class Usuario {
+import java.io.Serial;
+import java.io.Serializable;
 
+@Entity(name = "usuario")
+public class Usuario implements Serializable {
+
+    @Serial
     private static final long serialVersionUID = 234565432L;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_usuario;

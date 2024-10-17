@@ -10,5 +10,6 @@ public class FacilApplication {
 
 		SpringApplication.run(FacilApplication.class, args);
 	}
-	//Arrumar o update da classe reserva, não sei o que fazer hoje
+	//amanha ver a gravação da aula de hj, e arrumar as entity
+	//especificamente as coluna de fk
 }
