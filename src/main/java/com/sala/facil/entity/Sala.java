@@ -1,12 +1,11 @@
 package com.sala.facil.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity
 public class Sala implements Serializable {
@@ -17,12 +16,20 @@ public class Sala implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_sala;
-    private String nome;
-    private String departamento;
-    private String descricao;
-    private int status;
 
-    public Sala(Long id_sala, String nome, String departamento, String descricao, int status) {
+    private String nome;
+
+    private String departamento;
+
+    private String descricao;
+
+    private boolean status;
+
+    @OneToMany
+    @JsonIgnore
+    private List<Reserva> reserva;
+
+    public Sala(Long id_sala, String nome, String departamento, String descricao, boolean status) {
         this.id_sala = id_sala;
         this.nome = nome;
         this.departamento = departamento;
@@ -32,6 +39,7 @@ public class Sala implements Serializable {
 
     public Sala() {
     }
+
 
     public String getNome() {
         return nome;
@@ -57,14 +65,6 @@ public class Sala implements Serializable {
         this.descricao = descricao;
     }
 
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
     public void setId_sala(Long idSala) {
         this.id_sala = idSala;
     }
@@ -72,4 +72,21 @@ public class Sala implements Serializable {
     public Long getId_sala() {
         return id_sala;
     }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
+    }
+
+    public List<Reserva> getReserva() {
+        return reserva;
+    }
+
+    public void setReserva(List<Reserva> reserva) {
+        this.reserva = reserva;
+    }
+
 }

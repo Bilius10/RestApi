@@ -1,14 +1,15 @@
 package com.sala.facil.repository;
 
 import com.sala.facil.entity.Sala;
+import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
-import java.util.Optional;
-
+@Transactional
 public interface SalaRepository extends JpaRepository<Sala, Long> {
 
-    @Query("SELECT s.status FROM Sala s WHERE s.id_sala = :id_sala AND s.status = 1")
-    Optional<Integer> findById_salaAndStatus(Long id_sala);
+    @Modifying
+    @Query("UPDATE Sala s SET s.nome = :nome, s.departamento = :departamento, s.descricao = :descricao, s.status = :status WHERE s.id_sala = :id")
+    int  updateSalaById(String nome, String departamento, String descricao, Boolean status, Long id);
 }

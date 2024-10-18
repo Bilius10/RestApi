@@ -10,6 +10,6 @@ public class FacilApplication {
 
 		SpringApplication.run(FacilApplication.class, args);
 	}
-	//amanha ver a gravação da aula de hj, e arrumar as entity
-	//especificamente as coluna de fk
+	//Tem coisa pra arrumar, refaz ai
+	//depois da uma olhada na funcao atualizar no service, fiscalizar o retorno
 }

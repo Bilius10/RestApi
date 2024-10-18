@@ -1,5 +1,6 @@
 package com.sala.facil.service;
 
+import com.sala.facil.entity.Sala;
 import com.sala.facil.entity.Usuario;
 import com.sala.facil.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,5 +35,16 @@ public class UsuarioService {
         }
 
         return usuario;
+    }
+
+    public Optional<Usuario> atualizarUsuario(long id, Usuario usuario){
+
+        Optional<Usuario> byId = repository.findById(id);
+
+        if(byId.isEmpty()){
+            return byId;
+        }
+
+        return null;
     }
 }

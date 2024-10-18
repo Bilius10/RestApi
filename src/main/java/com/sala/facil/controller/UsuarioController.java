@@ -19,12 +19,12 @@ public class UsuarioController {
     @Autowired
     private UsuarioService service;
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<Usuario>> getAllUser(){
         return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<Usuario> saveUsuario(@RequestBody @Valid UsuarioDTO usuarioDTO){
 
         Usuario usuario = new Usuario();
@@ -32,7 +32,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.saveUsuario(usuario));
     }
 
-    @GetMapping("/find/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<Object> findById(@PathVariable long id){
         Optional<Usuario> usuario = service.findById(id);
 
@@ -42,7 +42,7 @@ public class UsuarioController {
         return ResponseEntity.status(HttpStatus.OK).body(usuario);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteByID(@PathVariable long id){
         Optional<Usuario> usuario = service.deleteById(id);
 
@@ -50,5 +50,22 @@ public class UsuarioController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado");
         }
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Object> atualizarUsuario(@PathVariable long id, @RequestBody UsuarioDTO usuarioDTO){
+
+        Usuario usuario = new Usuario();
+        BeanUtils.copyProperties(usuarioDTO, usuario);
+
+        Optional<Usuario> usuario1 = service.atualizarUsuario(id, usuario);
+
+        if (usuario1.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado");
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(usuario1);
+
+
     }
 }

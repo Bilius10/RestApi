@@ -1,7 +1,6 @@
 package com.sala.facil.controller;
 
 import com.sala.facil.DTOS.ReservaDTO;
-import com.sala.facil.Exceptions.*;
 import com.sala.facil.entity.Reserva;
 import com.sala.facil.service.ReservaService;
 import jakarta.validation.Valid;
@@ -29,28 +28,14 @@ public class ReservaController {
 
     @PostMapping("/create")
     public ResponseEntity<Object> createReserva(@RequestBody @Valid ReservaDTO reservaDTO)  {
-    try {
+
         Reserva reserva = new Reserva();
         BeanUtils.copyProperties(reservaDTO, reserva);
 
         Reserva reserva1 = service.createReserva(reserva);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(reserva1);
-    }catch (UsuarioJaPossuiReservaException u){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(u.getMessage());
-    }catch (SalaEstaDesativada s){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(s.getMessage());
-    }catch (JaExisteReservaNesseDia j) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(j.getMessage());
-    }catch (DataAtingiuPrazo d) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(d.getMessage());
-    }catch (DataDaReservaJaPassou d) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(d.getMessage());
-    }catch (SalaNaoExiste s){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(s.getMessage());
-    }catch (UsuarioNaoExiste u){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(u.getMessage());
-    }
+
 
     }
 
@@ -65,7 +50,7 @@ public class ReservaController {
     }
 
     @DeleteMapping("/delete/{id}")
-    private ResponseEntity<Object> deleteByID(@PathVariable long id){
+    private ResponseEntity<String> deleteByID(@PathVariable long id){
         Optional<Reserva> reserva = service.deleteByID(id);
 
         if(reserva.isEmpty()){
@@ -76,6 +61,7 @@ public class ReservaController {
 
     @PutMapping("/update")
     private ResponseEntity<Object> atualizarReserva(@RequestBody @Valid ReservaDTO reservaDTO){
+
         Reserva reserva = new Reserva();
         BeanUtils.copyProperties(reservaDTO, reserva);
 

@@ -1,9 +1,6 @@
 package com.sala.facil.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -18,19 +15,28 @@ public class Reserva implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_reserva;
-    private LocalDateTime data_reserva;
-    private LocalDateTime data_pedido;
-    private int status;
-    private Long sala_id;
-    private Long usuario_id;
 
-    public Reserva(Long id_reserva, LocalDateTime data_reserva, LocalDateTime data_pedido, int status, Long sala_id, Long usuario_id) {
+    private LocalDateTime data_reserva;
+
+    private LocalDateTime data_pedido;
+
+    private boolean status;
+
+    @ManyToOne
+    @JoinColumn(name = "sala_id")
+    private Sala sala;
+
+    @ManyToOne
+    @JoinColumn(name = "usuario_id")
+    private Usuario usuario;
+
+    public Reserva(Long id_reserva, LocalDateTime data_reserva, LocalDateTime data_pedido, boolean status, Sala sala, Usuario usuario) {
         this.id_reserva = id_reserva;
         this.data_reserva = data_reserva;
         this.data_pedido = data_pedido;
         this.status = status;
-        this.sala_id = sala_id;
-        this.usuario_id = usuario_id;
+        this.sala = sala;
+        this.usuario = usuario;
     }
 
     public Reserva() {
@@ -52,35 +58,35 @@ public class Reserva implements Serializable {
         this.data_pedido = data_pedido;
     }
 
-    public int getStatus() {
-        return status;
-    }
-
-    public void setStatus(int status) {
-        this.status = status;
-    }
-
-    public long getSala_id() {
-        return sala_id;
-    }
-
-    public void setSala_id(Long sala_id) {
-        this.sala_id = sala_id;
-    }
-
-    public Long getUsuario_id() {
-        return usuario_id;
-    }
-
-    public void setUsuario_id(Long usuario_id) {
-        this.usuario_id = usuario_id;
-    }
-
     public void setId_reserva(Long idReserva) {
         this.id_reserva = idReserva;
     }
 
     public Long getId_reserva() {
         return id_reserva;
+    }
+
+    public Sala getSala() {
+        return sala;
+    }
+
+    public void setSala(Sala sala) {
+        this.sala = sala;
+    }
+
+    public Usuario getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(Usuario usuario) {
+        this.usuario = usuario;
+    }
+
+    public boolean isStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }

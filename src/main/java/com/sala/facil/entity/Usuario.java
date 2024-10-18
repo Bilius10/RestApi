@@ -1,12 +1,11 @@
 package com.sala.facil.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.List;
 
 @Entity(name = "usuario")
 public class Usuario implements Serializable {
@@ -17,10 +16,18 @@ public class Usuario implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_usuario;
+
     private String nome;
+
     private String email;
+
     private String phone;
+
     private String cpf;
+
+    @OneToMany
+    @JsonIgnore
+    private List<Reserva> reservas;
 
     public Usuario(Long id_usuario, String nome, String email, String phone, String cpf) {
         this.id_usuario = id_usuario;
@@ -32,6 +39,7 @@ public class Usuario implements Serializable {
 
     public Usuario() {
     }
+
 
     public String getNome() {
         return nome;
@@ -71,5 +79,13 @@ public class Usuario implements Serializable {
 
     public Long getId_usuario() {
         return id_usuario;
+    }
+
+    public List<Reserva> getReservas() {
+        return reservas;
+    }
+
+    public void setReservas(List<Reserva> reservas) {
+        this.reservas = reservas;
     }
 }

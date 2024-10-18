@@ -35,4 +35,18 @@ public class SalaService {
 
         return sala;
     }
+
+    public Optional<Sala> atualizarSala(Sala salaNova, long id){
+
+        Optional<Sala> byId = repository.findById(id);
+
+        if(byId.isEmpty()){
+            return byId;
+        }
+
+        int rowsUpdated  = repository.updateSalaById(salaNova.getNome(), salaNova.getDepartamento(),
+                salaNova.getDescricao(), salaNova.isStatus(), salaNova.getId_sala());
+
+        return Optional.of(salaNova);
+    }
 }
