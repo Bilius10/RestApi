@@ -1,10 +1,12 @@
 package com.sala.facil.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 
 import java.io.Serial;
 import java.io.Serializable;
 import java.time.LocalDateTime;
+
 
 @Entity
 public class Reserva implements Serializable {
@@ -23,11 +25,11 @@ public class Reserva implements Serializable {
     private boolean status;
 
     @ManyToOne
-    @JoinColumn(name = "sala_id")
+    @JoinColumn(name = "sala_id", nullable = false)
     private Sala sala;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
 
     public Reserva(Long id_reserva, LocalDateTime data_reserva, LocalDateTime data_pedido, boolean status, Sala sala, Usuario usuario) {
@@ -89,4 +91,5 @@ public class Reserva implements Serializable {
     public void setStatus(boolean status) {
         this.status = status;
     }
+
 }

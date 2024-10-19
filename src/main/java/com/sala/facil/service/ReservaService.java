@@ -1,7 +1,10 @@
 package com.sala.facil.service;
 
 
+import com.sala.facil.DTOS.ReservaDTO;
 import com.sala.facil.entity.Reserva;
+import com.sala.facil.entity.Sala;
+import com.sala.facil.entity.Usuario;
 import com.sala.facil.repository.ReservaRepository;
 import com.sala.facil.repository.SalaRepository;
 import com.sala.facil.repository.UsuarioRepository;
@@ -15,13 +18,16 @@ public class ReservaService{
 
     @Autowired
     public ReservaRepository repository;
-
+    @Autowired
+    public UsuarioRepository repositoryUsuario;
+    @Autowired
+    public SalaRepository repositorySala;
 
     public List<Reserva> findAll(){
         return repository.findAll();
     }
 
-    public Reserva createReserva (Reserva reserva) {
+    public Reserva createReserva (Reserva reserva, ReservaDTO reservaDTO) {
 
         return repository.save(reserva);
     }
@@ -40,13 +46,15 @@ public class ReservaService{
         return reserva;
     }
 
-    public int atualizarReserva(Reserva reserva){
+    public Optional<Reserva> atualizarReserva(Long id, Reserva reservaNova){
 
-        Optional<Reserva> byId = repository.findById(reserva.getId_reserva());
+        Optional<Reserva> byId = repository.findById(id);
 
         if(byId.isEmpty()){
-            return 0;
+            return byId;
         }
-        return 1;
+
+
+        return Optional.of(repository.save(reservaNova));
     }
 }

@@ -3,6 +3,7 @@ package com.sala.facil.entity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
+
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
@@ -25,7 +26,7 @@ public class Usuario implements Serializable {
 
     private String cpf;
 
-    @OneToMany
+    @OneToMany(mappedBy = "usuario",cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
     private List<Reserva> reservas;
 

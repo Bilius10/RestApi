@@ -30,7 +30,7 @@ public class SalaController {
 
         Sala sala = new Sala();
         BeanUtils.copyProperties(salaDTO, sala);
-
+        sala.setStatus(salaDTO.status() == 1);
         return ResponseEntity.status(HttpStatus.CREATED).body(service.saveSala(sala));
     }
 
@@ -62,13 +62,13 @@ public class SalaController {
 
         sala.setStatus(salaDTO.status() == 1);
 
-        Optional<Sala> sala1 = service.atualizarSala(sala, id);
+        Optional<Sala> rowAffected = service.atualizarSala(id, sala);
 
-        if(sala1.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Id não encontrado");
+        if(rowAffected.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sala não encontrado");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(sala1);
+        return ResponseEntity.status(HttpStatus.OK).body(rowAffected);
 
     }
 

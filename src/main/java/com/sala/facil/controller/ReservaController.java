@@ -21,26 +21,27 @@ public class ReservaController {
     @Autowired
     private ReservaService service;
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<Reserva>> getAllReservas(){
         return ResponseEntity.status(HttpStatus.OK).body(service.findAll());
     }
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<Object> createReserva(@RequestBody @Valid ReservaDTO reservaDTO)  {
 
         Reserva reserva = new Reserva();
         BeanUtils.copyProperties(reservaDTO, reserva);
+        reserva.setStatus(reservaDTO.status() == 1);
 
-        Reserva reserva1 = service.createReserva(reserva);
+        Reserva reserva1 = service.createReserva(reserva, reservaDTO);
 
         return ResponseEntity.status(HttpStatus.CREATED).body(reserva1);
 
 
     }
 
-    @GetMapping("/find/{id}")
-    public ResponseEntity<Object> findById(@PathVariable long id){
+    @GetMapping("{id}")
+    public ResponseEntity<Object> findById(@PathVariable Long id){
         Optional<Reserva> reserva = service.findByID(id);
 
         if(reserva.isEmpty()){
@@ -49,8 +50,8 @@ public class ReservaController {
         return ResponseEntity.status(HttpStatus.OK).body(reserva);
     }
 
-    @DeleteMapping("/delete/{id}")
-    private ResponseEntity<String> deleteByID(@PathVariable long id){
+    @DeleteMapping("{id}")
+    private ResponseEntity<String> deleteByID(@PathVariable Long id){
         Optional<Reserva> reserva = service.deleteByID(id);
 
         if(reserva.isEmpty()){
@@ -59,16 +60,19 @@ public class ReservaController {
         return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
-    @PutMapping("/update")
-    private ResponseEntity<Object> atualizarReserva(@RequestBody @Valid ReservaDTO reservaDTO){
+    @PutMapping("/{id}")
+    private ResponseEntity<Object> atualizarReserva(@PathVariable Long id,@RequestBody @Valid ReservaDTO reservaDTO){
 
         Reserva reserva = new Reserva();
         BeanUtils.copyProperties(reservaDTO, reserva);
 
-        int rowsAffected = service.atualizarReserva(reserva);
-        if(rowsAffected == 0){
+        reserva.setStatus(reservaDTO.status() == 1);
+
+        Optional<Reserva> rowAffected = service.atualizarReserva(id,reserva);
+
+        if(rowAffected.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reserva não Encontrada");
         }
-        return ResponseEntity.status(HttpStatus.OK).body("Reserva atualizada");
+        return ResponseEntity.status(HttpStatus.OK).body(rowAffected);
     }
 }

@@ -37,7 +37,7 @@ public class UsuarioService {
         return usuario;
     }
 
-    public Optional<Usuario> atualizarUsuario(long id, Usuario usuario){
+    public Optional<Usuario> atualizarUsuario(Long id, Usuario usuarioNovo){
 
         Optional<Usuario> byId = repository.findById(id);
 
@@ -45,6 +45,6 @@ public class UsuarioService {
             return byId;
         }
 
-        return null;
+        return Optional.of(repository.save(usuarioNovo));
     }
 }

@@ -2,7 +2,6 @@ package com.sala.facil.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-
 import java.io.Serial;
 import java.io.Serializable;
 import java.util.List;
@@ -25,9 +24,9 @@ public class Sala implements Serializable {
 
     private boolean status;
 
-    @OneToMany
+    @OneToMany(mappedBy = "sala", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private List<Reserva> reserva;
+    private List<Reserva> reservas;
 
     public Sala(Long id_sala, String nome, String departamento, String descricao, boolean status) {
         this.id_sala = id_sala;
@@ -81,12 +80,12 @@ public class Sala implements Serializable {
         this.status = status;
     }
 
-    public List<Reserva> getReserva() {
-        return reserva;
+    public List<Reserva> getReservas() {
+        return reservas;
     }
 
-    public void setReserva(List<Reserva> reserva) {
-        this.reserva = reserva;
+    public void setReservas(List<Reserva> reserva) {
+        this.reservas = reserva;
     }
 
 }

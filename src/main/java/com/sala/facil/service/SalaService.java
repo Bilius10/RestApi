@@ -36,7 +36,7 @@ public class SalaService {
         return sala;
     }
 
-    public Optional<Sala> atualizarSala(Sala salaNova, long id){
+    public Optional<Sala> atualizarSala(Long id, Sala salaNova){
 
         Optional<Sala> byId = repository.findById(id);
 
@@ -44,9 +44,6 @@ public class SalaService {
             return byId;
         }
 
-        int rowsUpdated  = repository.updateSalaById(salaNova.getNome(), salaNova.getDepartamento(),
-                salaNova.getDescricao(), salaNova.isStatus(), salaNova.getId_sala());
-
-        return Optional.of(salaNova);
+        return Optional.of(repository.save(salaNova));
     }
 }

@@ -10,6 +10,5 @@ public class FacilApplication {
 
 		SpringApplication.run(FacilApplication.class, args);
 	}
-	//Tem coisa pra arrumar, refaz ai
-	//depois da uma olhada na funcao atualizar no service, fiscalizar o retorno
+	//o erro ao criar a sala, se da pelo fato dela precisar de criar o usuario, não o id
 }

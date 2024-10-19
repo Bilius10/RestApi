@@ -58,14 +58,12 @@ public class UsuarioController {
         Usuario usuario = new Usuario();
         BeanUtils.copyProperties(usuarioDTO, usuario);
 
-        Optional<Usuario> usuario1 = service.atualizarUsuario(id, usuario);
+        Optional<Usuario> rowAffected = service.atualizarUsuario(id, usuario);
 
-        if (usuario1.isEmpty()){
+        if (rowAffected.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado");
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(usuario1);
-
-
+        return ResponseEntity.status(HttpStatus.OK).body(rowAffected);
     }
 }
