@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping(value = "usuario")
+@RequestMapping(value = "usuarios")
 public class UsuarioController {
 
     @Autowired
@@ -66,4 +66,6 @@ public class UsuarioController {
 
         return ResponseEntity.status(HttpStatus.OK).body(rowAffected);
     }
+
+
 }

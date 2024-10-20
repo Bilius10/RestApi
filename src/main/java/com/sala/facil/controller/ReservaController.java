@@ -1,7 +1,9 @@
 package com.sala.facil.controller;
 
 import com.sala.facil.DTOS.ReservaDTO;
+import com.sala.facil.Exceptions.RegraNegocioException;
 import com.sala.facil.entity.Reserva;
+import com.sala.facil.entity.Usuario;
 import com.sala.facil.service.ReservaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
@@ -15,7 +17,7 @@ import java.util.Optional;
 
 
 @RestController
-@RequestMapping(value = "reserva")
+@RequestMapping(value = "reservas")
 public class ReservaController {
 
     @Autowired
@@ -27,16 +29,19 @@ public class ReservaController {
     }
 
     @PostMapping
-    public ResponseEntity<Object> createReserva(@RequestBody @Valid ReservaDTO reservaDTO)  {
+    public ResponseEntity<Object> createReserva(@RequestBody @Valid ReservaDTO reservaDTO) throws RegraNegocioException {
 
-        Reserva reserva = new Reserva();
-        BeanUtils.copyProperties(reservaDTO, reserva);
-        reserva.setStatus(reservaDTO.status() == 1);
+        try {
+            Reserva reserva = new Reserva();
+            BeanUtils.copyProperties(reservaDTO, reserva);
+            reserva.setStatus(reservaDTO.status() == 1);
 
-        Reserva reserva1 = service.createReserva(reserva, reservaDTO);
+            Reserva reserva1 = service.createReserva(reserva, reservaDTO.sala_id(), reservaDTO.usuario_id());
 
-        return ResponseEntity.status(HttpStatus.CREATED).body(reserva1);
-
+            return ResponseEntity.status(HttpStatus.CREATED).body(reserva1);
+        }catch (RegraNegocioException r){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(r.getMessage());
+        }
 
     }
 
@@ -75,4 +80,27 @@ public class ReservaController {
         }
         return ResponseEntity.status(HttpStatus.OK).body(rowAffected);
     }
+
+    @GetMapping("/{userId}/usuario")
+    private ResponseEntity<Object> usuarioReservas(@PathVariable Long userId){
+
+        List<Reserva> reservasUsuario = service.usuarioReservas(userId);
+
+        if(reservasUsuario.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não possui reservas");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(reservasUsuario);
+    }
+
+    @GetMapping("/{salaId}/salas")
+    private ResponseEntity<Object> salaReservas(@PathVariable Long salaId){
+
+        List<Reserva> reservasSala = service.salaReservas(salaId);
+
+        if(reservasSala.isEmpty()){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não possui reservas");
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(reservasSala);
+    }
+
 }

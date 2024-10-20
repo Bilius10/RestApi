@@ -39,7 +39,6 @@ public class Sala implements Serializable {
     public Sala() {
     }
 
-
     public String getNome() {
         return nome;
     }

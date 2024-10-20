@@ -10,5 +10,5 @@ public class FacilApplication {
 
 		SpringApplication.run(FacilApplication.class, args);
 	}
-	//o erro ao criar a sala, se da pelo fato dela precisar de criar o usuario, não o id
+	//arrumar o metodo post
 }
