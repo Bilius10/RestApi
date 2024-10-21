@@ -1,6 +1,5 @@
 package com.sala.facil.service;
 
-import com.sala.facil.entity.Sala;
 import com.sala.facil.entity.Usuario;
 import com.sala.facil.repository.UsuarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;

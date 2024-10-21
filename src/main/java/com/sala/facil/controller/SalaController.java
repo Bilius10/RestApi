@@ -51,7 +51,7 @@ public class SalaController {
         if(sala.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sala não Encontrado");
         }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Sala excluida");
     }
 
     @PutMapping("/{id}")

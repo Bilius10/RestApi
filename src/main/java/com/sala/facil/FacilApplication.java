@@ -10,5 +10,5 @@ public class FacilApplication {
 
 		SpringApplication.run(FacilApplication.class, args);
 	}
-	//arrumar o metodo post
+
 }

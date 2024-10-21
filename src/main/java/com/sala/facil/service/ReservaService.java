@@ -1,7 +1,5 @@
 package com.sala.facil.service;
 
-
-import com.sala.facil.DTOS.ReservaDTO;
 import com.sala.facil.Exceptions.RegraNegocioException;
 import com.sala.facil.entity.Reserva;
 import com.sala.facil.entity.Sala;
@@ -71,8 +69,6 @@ public class ReservaService{
             throw new RegraNegocioException("Usuario ja possui reservas ativas");
         }
 
-        System.out.println(usuario.toString());
-        System.out.println(byIdSala.toString());
         return repository.save(reserva);
     }
 

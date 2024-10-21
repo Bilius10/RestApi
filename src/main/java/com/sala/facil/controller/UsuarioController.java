@@ -49,7 +49,7 @@ public class UsuarioController {
         if(usuario.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario não encontrado");
         }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Usuario excluido");
     }
 
     @PutMapping("/{id}")

@@ -3,7 +3,6 @@ package com.sala.facil.controller;
 import com.sala.facil.DTOS.ReservaDTO;
 import com.sala.facil.Exceptions.RegraNegocioException;
 import com.sala.facil.entity.Reserva;
-import com.sala.facil.entity.Usuario;
 import com.sala.facil.service.ReservaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
@@ -62,7 +61,7 @@ public class ReservaController {
         if(reserva.isEmpty()){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reserva não Encontrada");
         }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Reserva exluida");
     }
 
     @PutMapping("/{id}")
