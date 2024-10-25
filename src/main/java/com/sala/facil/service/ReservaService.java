@@ -7,6 +7,7 @@ import com.sala.facil.entity.Usuario;
 import com.sala.facil.repository.ReservaRepository;
 import com.sala.facil.repository.SalaRepository;
 import com.sala.facil.repository.UsuarioRepository;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -47,7 +48,7 @@ public class ReservaService{
 
         //checar se a data ja passou
         LocalDateTime localDateTime  = LocalDateTime.now();
-        if(reserva.getData_pedido().isBefore(localDateTime)) {
+        if(reserva.getData_reserva().isBefore(localDateTime)) {
             throw new RegraNegocioException("Data reservada ja passou");
         }
 
@@ -58,18 +59,19 @@ public class ReservaService{
         }
 
         //checar se outro usuario ja reservou a sala
-        List<Integer> byDataPedido = repository.findFirstByData_pedido(reserva.getData_pedido());
+        Optional<Integer> byDataPedido = repository.findFirstByData_pedido(idSala, reserva.getData_reserva());
         if(!byDataPedido.isEmpty()){
-            throw new RegraNegocioException("Essa sala ja possui uma reserva nesse dia");
+            throw new RegraNegocioException("Essa sala ja possui uma reserva nesse dia e horario");
         }
 
-        //checar se o usuario ja possui reservas
-        List<Integer> byusuarioId = repository.findFirstByidUsuario(reserva.getUsuario().getId_usuario());
+        //checar se usuario ja possui uma reserva no mesmo horario
+        Optional<Integer> byusuarioId = repository.findFirstByidUsuario(idUsuario, reserva.getData_reserva());
         if(!byusuarioId.isEmpty()){
-            throw new RegraNegocioException("Usuario ja possui reservas ativas");
+            throw new RegraNegocioException("Usuario ja possui reserva ativa nesse horario");
         }
 
         return repository.save(reserva);
+
     }
 
     public Optional<Reserva> findByID(long ID){
@@ -86,16 +88,35 @@ public class ReservaService{
         return reserva;
     }
 
-    public Optional<Reserva> atualizarReserva(Long id, Reserva reservaNova){
+    public Reserva atualizarReserva(Reserva reservaNova, Long idSala, Long idUsuario)  throws RegraNegocioException{
 
-        Optional<Reserva> byId = repository.findById(id);
+        //checar usuario existe
+        Optional<Usuario> usuario = repositoryUsuario.findById(idUsuario);
+        if(usuario.isEmpty()){
+            throw new RegraNegocioException("Usuario não existe");
+        }
+        reservaNova.setUsuario(usuario.get());
 
-        if(byId.isEmpty()){
-            return byId;
+        //checar sala existe e esta ativa
+        Optional<Sala> byIdSala = repositorySala.findById_sala(idSala);
+        if(byIdSala.isEmpty()){
+            throw new RegraNegocioException("Sala não existe ou desativa");
+        }
+        reservaNova.setSala(byIdSala.get());
+
+        //checar se a data ja passou
+        LocalDateTime localDateTime  = LocalDateTime.now();
+        if(reservaNova.getData_reserva().isBefore(localDateTime)) {
+            throw new RegraNegocioException("Data reservada ja passou");
         }
 
+        //checar 30 dias de antecendia
+        long diasEntre = ChronoUnit.DAYS.between(reservaNova.getData_reserva(), reservaNova.getData_pedido());
+        if(diasEntre > 30){
+            throw new RegraNegocioException("Seu pedido exceu o 30 dias de antecedencia");
+        }
 
-        return Optional.of(repository.save(reservaNova));
+        return repository.save(reservaNova);
     }
 
     public List<Reserva> usuarioReservas(Long userID){

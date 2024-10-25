@@ -65,19 +65,20 @@ public class ReservaController {
     }
 
     @PutMapping("/{id}")
-    private ResponseEntity<Object> atualizarReserva(@PathVariable Long id,@RequestBody @Valid ReservaDTO reservaDTO){
+    private ResponseEntity<Object> atualizarReserva(@PathVariable Long id,@RequestBody @Valid ReservaDTO reservaDTO) throws RegraNegocioException{
 
-        Reserva reserva = new Reserva();
-        BeanUtils.copyProperties(reservaDTO, reserva);
+        try {
+            Reserva reserva = new Reserva();
+            BeanUtils.copyProperties(reservaDTO, reserva);
+            reserva.setStatus(reservaDTO.status() == 1);
+            reserva.setId_reserva(id);
 
-        reserva.setStatus(reservaDTO.status() == 1);
+            Reserva reserva1 = service.atualizarReserva(reserva, reservaDTO.sala_id(), reservaDTO.usuario_id());
 
-        Optional<Reserva> rowAffected = service.atualizarReserva(id,reserva);
-
-        if(rowAffected.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Reserva não Encontrada");
+            return ResponseEntity.status(HttpStatus.CREATED).body(reserva1);
+        }catch (RegraNegocioException r){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(r.getMessage());
         }
-        return ResponseEntity.status(HttpStatus.OK).body(rowAffected);
     }
 
     @GetMapping("/{userId}/usuario")

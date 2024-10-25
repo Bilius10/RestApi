@@ -91,4 +91,15 @@ public class Reserva implements Serializable {
         this.status = status;
     }
 
+    @Override
+    public String toString() {
+        return "Reserva{" +
+                "id_reserva=" + id_reserva +
+                ", data_reserva=" + data_reserva +
+                ", data_pedido=" + data_pedido +
+                ", status=" + status +
+                ", sala=" + sala +
+                ", usuario=" + usuario +
+                '}';
+    }
 }
