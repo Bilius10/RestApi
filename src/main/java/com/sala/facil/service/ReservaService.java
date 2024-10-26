@@ -53,9 +53,9 @@ public class ReservaService{
         }
 
         //checar 30 dias de antecendia
-        long diasEntre = ChronoUnit.DAYS.between(reserva.getData_reserva(), reserva.getData_pedido());
+        long diasEntre = ChronoUnit.DAYS.between(reserva.getData_pedido(), reserva.getData_reserva());
         if(diasEntre > 30){
-            throw new RegraNegocioException("Seu pedido exceu o 30 dias de antecedencia");
+            throw new RegraNegocioException("Seu pedido excedeu o 30 dias de antecedencia");
         }
 
         //checar se outro usuario ja reservou a sala
@@ -111,9 +111,28 @@ public class ReservaService{
         }
 
         //checar 30 dias de antecendia
-        long diasEntre = ChronoUnit.DAYS.between(reservaNova.getData_reserva(), reservaNova.getData_pedido());
+        long diasEntre = ChronoUnit.DAYS.between(reservaNova.getData_pedido(), reservaNova.getData_reserva());
         if(diasEntre > 30){
             throw new RegraNegocioException("Seu pedido exceu o 30 dias de antecedencia");
+        }
+
+        Optional<Reserva> byId = repository.findById(reservaNova.getId_reserva());
+        if(byId.isPresent()){
+
+            if(byId.get().getUsuario().getId_usuario() != idUsuario){
+                //checar se outro usuario ja reservou a sala
+                Optional<Integer> byDataPedido = repository.findFirstByData_pedido(idSala, reservaNova.getData_reserva());
+                if(!byDataPedido.isPresent()){
+                    throw new RegraNegocioException("Essa sala ja possui uma reserva nesse dia e horario");
+                }
+
+                //checar se usuario ja possui uma reserva no mesmo horario
+                Optional<Integer> byusuarioId = repository.findFirstByidUsuario(idUsuario, reservaNova.getData_reserva());
+                if(!byusuarioId.isPresent()){
+                    throw new RegraNegocioException("Usuario ja possui reserva ativa nesse horario");
+                }
+            }
+
         }
 
         return repository.save(reservaNova);

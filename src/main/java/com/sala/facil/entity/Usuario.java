@@ -25,7 +25,7 @@ public class Usuario implements Serializable {
 
     private String cpf;
 
-    @OneToMany(mappedBy = "usuario",cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "usuario")
     @JsonIgnore
     private List<Reserva> reservas;
 

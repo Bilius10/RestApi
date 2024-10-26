@@ -6,6 +6,7 @@ import com.sala.facil.service.SalaService;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -46,12 +47,16 @@ public class SalaController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteByID(@PathVariable long id){
-        Optional<Sala> sala = service.deleteByID(id);
+        try {
+            Optional<Sala> sala = service.deleteByID(id);
 
-        if(sala.isEmpty()){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sala não Encontrado");
+            if (sala.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Sala não Encontrado");
+            }
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Sala excluida");
+        }catch (DataIntegrityViolationException s) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Sala esta inserida em uma reserva");
         }
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Sala excluida");
     }
 
     @PutMapping("/{id}")

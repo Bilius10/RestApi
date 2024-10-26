@@ -9,8 +9,7 @@ public class FacilApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(FacilApplication.class, args);
-		//arrumar o metodo put do reserva, hj ta foda já
-		//na parte dos 30 dias de antecedencia, não funcionou mais
+		//arrumar put usuario e sala
 
 	}
 

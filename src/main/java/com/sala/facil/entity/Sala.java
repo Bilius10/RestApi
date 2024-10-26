@@ -24,7 +24,7 @@ public class Sala implements Serializable {
 
     private boolean status;
 
-    @OneToMany(mappedBy = "sala", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "sala")
     @JsonIgnore
     private List<Reserva> reservas;
 
