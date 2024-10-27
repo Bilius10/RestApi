@@ -9,7 +9,7 @@ public class FacilApplication {
 	public static void main(String[] args) {
 
 		SpringApplication.run(FacilApplication.class, args);
-		//arrumar put usuario e sala
+
 
 	}
 

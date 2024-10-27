@@ -81,7 +81,7 @@ public class ReservaController {
         }
     }
 
-    @GetMapping("/{userId}/usuario")
+    @GetMapping("/{userId}/usuarios")
     private ResponseEntity<Object> usuarioReservas(@PathVariable Long userId){
 
         List<Reserva> reservasUsuario = service.usuarioReservas(userId);

@@ -60,13 +60,13 @@ public class ReservaService{
 
         //checar se outro usuario ja reservou a sala
         Optional<Integer> byDataPedido = repository.findFirstByData_pedido(idSala, reserva.getData_reserva());
-        if(!byDataPedido.isEmpty()){
+        if(byDataPedido.isPresent()){
             throw new RegraNegocioException("Essa sala ja possui uma reserva nesse dia e horario");
         }
 
         //checar se usuario ja possui uma reserva no mesmo horario
         Optional<Integer> byusuarioId = repository.findFirstByidUsuario(idUsuario, reserva.getData_reserva());
-        if(!byusuarioId.isEmpty()){
+        if(byusuarioId.isPresent()){
             throw new RegraNegocioException("Usuario ja possui reserva ativa nesse horario");
         }
 
@@ -122,13 +122,13 @@ public class ReservaService{
             if(byId.get().getUsuario().getId_usuario() != idUsuario){
                 //checar se outro usuario ja reservou a sala
                 Optional<Integer> byDataPedido = repository.findFirstByData_pedido(idSala, reservaNova.getData_reserva());
-                if(!byDataPedido.isPresent()){
+                if(byDataPedido.isPresent()){
                     throw new RegraNegocioException("Essa sala ja possui uma reserva nesse dia e horario");
                 }
 
                 //checar se usuario ja possui uma reserva no mesmo horario
                 Optional<Integer> byusuarioId = repository.findFirstByidUsuario(idUsuario, reservaNova.getData_reserva());
-                if(!byusuarioId.isPresent()){
+                if(byusuarioId.isPresent()){
                     throw new RegraNegocioException("Usuario ja possui reserva ativa nesse horario");
                 }
             }
